@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Tool</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#000,#140033,#000);
+    color:white;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    padding:20px;
+    border-radius:20px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+h2{
+    margin-bottom:15px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    margin-bottom:10px;
+    outline:none;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin:5px;
+    font-weight:bold;
+}
+
+.generate{
+    background:#00d4ff;
+}
+
+.download{
+    background:#00ff88;
+}
+
+.scan{
+    background:#ffb300;
+}
+
+#qrcode{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+}
+
+#reader{
+    width:100%;
+    margin-top:15px;
+}
+
+.result{
+    margin-top:15px;
+    word-break:break-all;
+    font-size:14px;
+}
+#qrcode{
+    padding:20px;
+    background-color:white;
+    border-radius:10px
+    
+        
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Generator -->
+    <div class="card">
+        <h2>QR Code Generator</h2>
+
+        <input type="text"
+               id="qrText"
+               placeholder="Enter text or URL">
+
+        <button class="generate" onclick="generateQR()">
+            Generate QR
+        </button>
+
+        <button class="download" onclick="downloadQR()">
+            Download QR
+        </button>
+	
+	<div id="qrcodecontainer">
+        <div id="qrcode"></div></div>
+    </div>
+
+    <!-- Scanner -->
+    <div class="card">
+        <h2>QR Code Scanner</h2>
+
+        <button class="scan" onclick="startScanner()">
+            Start Camera
+        </button>
+
+        <div id="reader"></div>
+
+        <div class="result">
+            Result:
+            <span id="result">No QR scanned yet</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+let qr;
+
+function generateQR(){
+
+    const text =
+        document.getElementById("qrText").value;
+
+    if(text.trim()===""){
+        alert("Enter text first");
+        return;
+    }
+
+    document.getElementById("qrcode").innerHTML="";
+
+    qr = new QRCode(
+        document.getElementById("qrcode"),
+        {
+            text:text,
+            width:220,
+            height:220
+        }
+    );
+}
+
+function downloadQR(){
+
+    const img =
+      document.querySelector("#qrcode img");
+
+    if(!img){
+        alert("Generate QR first");
+        return;
+    }
+
+    const a =
+      document.createElement("a");
+
+    a.href = img.src;
+    a.download = "QRCode.png";
+    a.click();
+}
+
+function startScanner(){
+
+    const scanner =
+      new Html5QrcodeScanner(
+        "reader",
+        {
+            fps:10,
+            qrbox:250
+        }
+      );
+
+    scanner.render(
+        function(decodedText){
+
+            document.getElementById(
+                "result"
+            ).innerText = decodedText;
+
+        },
+        function(error){}
+    );
+}
+
+</script>
+
+</body>
+</html>
