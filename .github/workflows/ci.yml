@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check HTML Files
+        run: |
+          echo "Checking project files..."
+          ls -la
+
+          if [ ! -f index.html ]; then
+            echo "Error: index.html not found!"
+            exit 1
+          fi
+
+          echo "Validation passed!"
